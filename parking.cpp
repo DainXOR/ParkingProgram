@@ -123,7 +123,10 @@ void MainProg::UserMenu(){
                     break;
                 }
 
-                case 2: setSaveData(PickUp()); break;
+                case 2:{
+                    setSaveData(PickUp());
+                    break;
+                }
                 case 3: return;
 
                 }
@@ -332,10 +335,7 @@ bool MainProg::Parking(std::string ParkType){
         Porcent = StrToDec(MainData[Spot.first][2]);
         Porcent += 1 / MaxSpots;
 
-        {
-            std::string PorcentStr = DecToStr(Porcent);
-            MainData[Spot.first][2] = PorcentStr;
-        }
+        MainData[Spot.first][2] = DecToStr(Porcent);
 
         FloorsData[Spot.first][Spot.second][0] = UsersData[ActUser][1];
         FloorsData[Spot.first][Spot.second][1] = getTimeStr();
@@ -347,9 +347,146 @@ bool MainProg::Parking(std::string ParkType){
     }
 }
 
-bool MainProg::PickUp()
-{
-    return 1;
+bool MainProg::PickUp(){
+
+    if(VerifyVehicle(UsersData[ActUser][1]) &&
+    VerifyVehicle(UsersData[ActUser][1], ActUser, UserPass)){
+
+        system("cls");
+        printf("Su vehiculo esta siendo retirado, por favor espere...\n\n");
+
+        int MaxSpots, Cost, THours, TWeeks, VehicleType;
+        float Porcent;
+        std::string InDate, InHour, OutDate, OutHour, ParkType;
+        std::pair<int, int> Pos = searchVehicle(UsersData[ActUser][1], true);
+
+        /// Get vehicle type to know the rate
+        if(UsersData[ActUser][2] == "C")
+            VehicleType = 0;
+
+        else if(UsersData[ActUser][2] == "M")
+            VehicleType = 1;
+
+        else
+            VehicleType = 2;
+
+
+        MaxSpots = StrToInt(MainData[Pos.first][0]);
+        Porcent = StrToDec(MainData[Pos.first][2]);
+        Porcent -= 1 / MaxSpots;
+        MainData[Pos.first][2].clear();
+        MainData[Pos.first][2] = DecToStr(Porcent);
+
+        InHour = FloorsData[Pos.first][Pos.second][1];
+        InDate = FloorsData[Pos.first][Pos.second][2];
+        ParkType = FloorsData[Pos.first][Pos.second][3];
+
+        OutHour = getTimeStr();
+        OutDate = getDateStr();
+
+        {
+            std::string HoursStr, MinutesStr;
+            int InHours, InMinutes, OutHours, OutMinutes;
+
+            HoursStr = InHour[0] + InHour[1];
+            MinutesStr = InHour[3] + InHour[4];
+
+            InHours = StrToInt(HoursStr);
+            InMinutes = StrToInt(MinutesStr);
+
+            ///--------------------------------------------
+
+            HoursStr.clear();
+            MinutesStr.clear();
+
+            HoursStr = OutHour[0] + OutHour[1];
+            MinutesStr = OutHour[3] + OutHour[4];
+
+            OutHours = StrToInt(HoursStr);
+            OutMinutes = StrToInt(MinutesStr);
+
+            ///--------------------------------------------
+
+            if(InDate != OutDate){
+
+                std::string InDayStr, InMonthStr, InYearStr, OutDayStr, OutMonthStr, OutYearStr;
+                int Days = 0, Months = 0, Years = 0;
+
+                InDayStr = InDate[0] + InDate[1];
+                InMonthStr = InDate[2] + InDate[3];
+                InYearStr = InDate[5] + InDate[6] + InDate[7] + InDate[8];
+
+                OutDayStr = OutDate[0] + OutDate[1];
+                OutMonthStr = OutDate[2] + OutDate[3];
+                OutYearStr = OutDate[5] + OutDate[6] + OutDate[7] + OutDate[8];
+
+                if(OutYearStr != InYearStr)
+                    Years = StrToInt(OutYearStr) - StrToInt(InYearStr);
+
+                if(OutMonthStr != InMonthStr){
+                    if(StrToInt(OutMonthStr) - StrToInt(InMonthStr) < 0){
+                        Years--;
+                        Months = 12 + (StrToInt(OutMonthStr) - StrToInt(InMonthStr));
+                    }
+                    else
+                        Months = StrToInt(OutMonthStr) - StrToInt(InMonthStr);
+                }
+
+                if(OutDayStr != InDayStr){
+                    if(StrToInt(OutDayStr) - StrToInt(InDayStr) < 0){
+                        Months--;
+                        Days = 30 + (StrToInt(OutDayStr) - StrToInt(InDayStr));
+                    }
+                    else
+                        Days = StrToInt(OutDayStr) - StrToInt(InDayStr);
+                }
+
+                TWeeks = (Days / 7) + (Months * 4) + (Years * 52);
+                THours = (Days * 24) + (Months * 30) + (Years * 365);
+
+                if(ParkType == "T")
+                    Cost = THours * TemporalRates[VehicleType];
+
+                else
+                    Cost = TWeeks * MonthlyRates[VehicleType];
+
+            }
+            else{
+
+                THours = OutHours - InHours;
+
+                if(OutMinutes < InMinutes)
+                    THours--;
+
+                if(ParkType == "T")
+                    Cost = THours * TemporalRates[VehicleType];
+
+                else
+                    Cost = MonthlyRates[VehicleType];
+
+            }
+        }
+
+        FloorsData[Pos.first].erase(Pos.second);
+
+        printf("El vehiculo ha sido retirado exitosamente!\n");
+        system("pause");
+
+        showTicket(Cost, InHour, InDate, OutHour, OutDate);
+
+        return true;
+
+    }
+
+    else{
+
+        system("cls");
+        printf("El vehiculo no ha sido encontrado, si tiene alguna duda por favor contactar con los administradores.\n\n");
+        printf("Linea de atencion: Numero no disponible.\n\n");
+        system("pause");
+        return false;
+
+    }
 }
 
 bool MainProg::Register(){
@@ -772,6 +909,37 @@ bool MainProg::ChangeSavePresets(){
 
 }
 
+void MainProg::showTicket(int Money, std::string HourIn, std::string DateIn, std::string HourOut, std::string DateOut){
+
+    system("cls");
+    printf("|==================================|\n"
+           "|------     PARQUEADERO      ------|\n"
+           "|-----      DEBORA PLATA      -----|\n"
+           "|==================================|\n"
+           "|----   FECHA Y HORA INGRESO   ----|\n"
+           "|----                          ----|\n"
+           "|----        %s        ----|\n"
+           "|----          %s           ----|\n"
+           "|----                          ----|\n"
+           "|----   FECHA Y HORA SALIDA    ----|\n"
+           "|----                          ----|\n"
+           "|----        %s        ----|\n"
+           "|----          %s           ----|\n"
+           "|----                          ----|\n"
+           "|----                          ----|\n"
+           "|----       VALOR A PAGAR      ----|\n"
+           "|----                          ----|\n"
+           "|----          $%i          ----|\n"
+           "|----                          ----|\n"
+           "|----                          ----|\n"
+           "|----       GRACIAS  POR       ----|\n"
+           "|----        SU VISITA!        ----|\n"
+           "|==================================|\n", DateIn.data(), HourIn.data(), DateOut.data(), HourOut.data(), Money);
+
+    system("pause");
+
+}
+
 void MainProg::showRates(){
 
     system("cls");
@@ -846,7 +1014,7 @@ void MainProg::showLevelData(int Floor){
 
 }
 
-void MainProg::searchVehicle(std::string License){
+std::pair<int, int> MainProg::searchVehicle(std::string License, bool Return){
 
     int Found = 0;
 
@@ -857,6 +1025,8 @@ void MainProg::searchVehicle(std::string License){
     for(auto Level : FloorsData)
         for(auto Slot : Level.second)
             if(Slot.second[0].data() == License){
+
+                if(Return) return std::pair<int, int>(Level.first, Slot.first);
 
                 Found++;
                 printf("|------------------------------------------------------------------------------------------|\n");
@@ -875,7 +1045,7 @@ void MainProg::searchVehicle(std::string License){
 
     }
 
-    return;
+    return std::pair<int, int>(0, 0);
 
 }
 

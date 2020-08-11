@@ -59,9 +59,11 @@ private:
     bool ChangeCosts();
     bool ChangeSavePresets();
 
+    void showTicket();
+    void showRates();
     void showGeneralData();
     void showLevelData(int Floor);
-    void searchVehicle(std::string License);
+    std::pair<int, int> searchVehicle(std::string License, bool Return = false);
 
 private:
     std::map<int, std::string[3]> MainData;

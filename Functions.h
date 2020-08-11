@@ -14,7 +14,24 @@ std::string getTimeStr(){
     TimeInfo = localtime(&rawTime);
 
     // I = 12H format   H = 24H format %H:%M:%S Con segundos
-    strftime(Buffer, sizeof(Buffer), "%H:%M %d-%m-%Y", TimeInfo);
+    strftime(Buffer, sizeof(Buffer), "%H:%M", TimeInfo);
+    std::string Str(Buffer);
+
+    return Str;
+
+}
+
+std::string getDateStr(){
+
+    time_t rawTime;
+    tm *TimeInfo;
+    char Buffer[80];
+
+    time(&rawTime);
+    TimeInfo = localtime(&rawTime);
+
+    // I = 12H format   H = 24H format %H:%M:%S Con segundos
+    strftime(Buffer, sizeof(Buffer), "%d-%m-%Y", TimeInfo);
     std::string Str(Buffer);
 
     return Str;

@@ -4,4 +4,11 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-        main.cpp
+        filehandler.cpp \
+        main.cpp \
+        parking.cpp
+
+HEADERS += \
+    Functions.h \
+    filehandler.h \
+    parking.h

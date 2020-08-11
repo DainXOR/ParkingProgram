@@ -10,6 +10,16 @@ MainProg::MainProg()
     : Admin(false), IsRunning(true)
 {
 
+    SaveAdmins = false;
+    SaveUsers = false;
+    SaveData = false;
+
+    TemporalRates[0] = 0;
+    TemporalRates[1] = 0;
+    TemporalRates[2] = 0;
+
+    SaveType = 0;
+
 }
 
 void MainProg::Setup(){
@@ -71,10 +81,7 @@ void MainProg::Setup(){
         setAdmin <= 1? setIsAdmin(true) : setIsAdmin(false);
 
     }
-
 }
-
-
 
 void MainProg::UserMenu(){
 
@@ -105,99 +112,32 @@ void MainProg::UserMenu(){
 
             Ans = Ans <= 1? 1 : Ans >= 3? 3 : Ans;
 
-            if(Login() || Register())
-                switch(Ans){
+            switch(Ans){
 
-                case 1:{
-                    int Type;
-                    std::string TypeStr;
-                    system("cls");
-                    printf("Seleccione el tipo de parqueo que desea\n\n");
-                    showRates();
-                    printf("\n\n1) Temporal\n2) Mensual\n\nOpcion: ");
-                    std::cin >> Type;
+            case 1:{
+                int Type;
+                std::string TypeStr;
+                system("cls");
+                printf("Seleccione el tipo de parqueo que desea\n\n");
+                showRates();
+                printf("\n\n1) Temporal\n2) Mensual\n\nOpcion: ");
+                std::cin >> Type;
 
-                    TypeStr = Type <= 1? "T" : "M";
+                TypeStr = Type <= 1? "T" : "M";
 
-                    setSaveData(Parking(TypeStr));
-                    break;
-                }
-
-                case 2:{
-                    setSaveData(PickUp());
-                    break;
-                }
-                case 3: return;
-
-                }
-
-            else{
-                Cont = false;
+                setSaveData(Parking(TypeStr));
                 break;
             }
 
+            case 2:{
+                setSaveData(PickUp());
+                break;
+            }
+
+            case 3: return;
+
+            }
         }
-
-            // Parquear
-
-                // Usuario?
-
-                    // Registrado o no?
-
-                        // Registrado = Parquear
-
-                            // Obtener hora
-
-                        // No registrado = Registrar usuario
-
-                            // Registro completado = Parquear
-
-                                // Obtener hora
-
-                            // No registra = Volver al menu
-
-            // Retirar
-
-                // Placa
-
-                    // Estacionado o no?
-
-                        // Estacionado = Confirmar cuenta
-
-                            // Correcta
-
-                                // Obtener hora
-
-                                // Cobrar
-
-                                    // Suficiente
-
-                                        // Devuelta
-
-                                        // Retirar
-
-                                        // Volver al menu
-
-                                    // Insuficiente
-
-                                        // Restar total
-
-                                        // Volver a cobrar
-
-                            // Incorrecta 5 veces
-
-                                // Consultar administracion
-
-                                // Volver al menu
-
-                        // No estacionado
-
-                            // Consultar administracion
-
-                            // Volver al menu
-
-
-
     }
 }
 
@@ -221,6 +161,9 @@ void MainProg::AdminMenu(){
     case 4: Admin = false; IsRunning = false; return;
 
     }
+
+    return;
+
 }
 
 //***************************  Setter functions  ***************************//
@@ -271,8 +214,12 @@ void MainProg::setSaveData(bool Status){SaveData = Status;}
 bool MainProg::getIsAdmin(){return Admin;}
 bool MainProg::getIsRunning(){return IsRunning;}
 
-void MainProg::getSavePresets(short &SaveType, std::pair<int, int> &EncryptData, std::string &HashType)
-{
+void MainProg::getSavePresets(short &ST, std::pair<int, int> &ED, std::string &HT){
+
+    ST = SaveType;
+    ED = EncryptData;
+    HT = Hash;
+    return;
 
 }
 void MainProg::getRatePresets(int *TR, int *MR){
@@ -311,6 +258,26 @@ std::map<std::string, std::string[3]> &MainProg::getUsersData(){return UsersData
 bool MainProg::doSaveAdmins(){return SaveAdmins;}
 bool MainProg::doSaveUsers(){return SaveUsers;}
 bool MainProg::doSaveData(){return SaveData;}
+
+std::pair<int, int> MainProg::SearchSpot(std::string VehicleType){
+
+    int LastSlot = 0;
+
+    for(auto Level : MainData)
+
+        if(StrToDec(Level.second[2]) < 100 && Level.second[1] == VehicleType)
+            for(auto Slot : FloorsData[Level.first]){
+
+                if(Slot.first > LastSlot + 1)
+                    return std::pair<int, int>(Level.first, LastSlot + 1);
+
+                else
+                    LastSlot = Slot.first;
+            }
+
+    return std::pair<int, int>(0, 0);
+
+}
 
 
 bool MainProg::Parking(std::string ParkType){

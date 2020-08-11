@@ -59,7 +59,7 @@ private:
     bool ChangeCosts();
     bool ChangeSavePresets();
 
-    void showTicket();
+    void showTicket(int Money, std::string HourIn, std::string DateIn, std::string HourOut, std::string DateOut);
     void showRates();
     void showGeneralData();
     void showLevelData(int Floor);

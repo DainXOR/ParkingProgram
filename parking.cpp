@@ -210,6 +210,17 @@ void MainProg::setIsRunning(bool Status){IsRunning = Status;}
 bool MainProg::getIsAdmin(){return Admin;}
 bool MainProg::getIsRunning(){return IsRunning;}
 
+void MainProg::getRatePresets(int *TemporalRates, int *MonthlyRates){
+
+    TemporalRates[2];
+
+}
+
+void MainProg::getRatePresets(int &CarTRate, int &BikeTRate, int &BicycleTRate, int &CarMRate, int &BikeMRate, int &BicycleMRate)
+{
+
+}
+
 std::map<int, std::string[3]> &MainProg::getMainData(){return MainData;}
 std::map<int, std::map<int, std::string[4]>> &MainProg::getFloorsData(){return FloorsData;}
 std::map<std::string, std::string> &MainProg::getAdminsData(){return AdminsData;}

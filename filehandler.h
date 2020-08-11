@@ -16,6 +16,9 @@ public:
     short &getSaveType();
     std::pair<int, int> &getEncryptData();
     std::string &getHash();
+    int *getTemporalRates();
+    int *getMonthlyRates();
+
 
     bool LoadData();
     void SaveData();
@@ -40,6 +43,12 @@ public:
     void setData(std::map<int,std::map<int, std::string[4]>> &Floors);
     void setData(std::map<std::string, std::string> &AdminsData);
     void setData(std::map<std::string, std::string[3]> &UsersData);
+
+    void setTemporalRates(int TemporalRatesArray[3]);
+    void setTemporalRates(int CarTRate, int BikeTRate, int BicycleTRate);
+
+    void setMonthlyRates(int MonthlyRatesArray[3]);
+    void setMonthlyRates(int CarMRate, int BikeMRate, int BicycleMRate);
 
 protected:
     //*********  Load functions  *********//
@@ -85,6 +94,9 @@ private:
     std::map<std::string, std::string[3]> UsersData;
     /// First = Type / Second = Bits size block
     std::pair<int, int> EncryptData;
+
+    int TemporalRates[3];
+    int MonthlyRates[3];
 
     std::string ConfigFile;
     std::string DataFile;

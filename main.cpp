@@ -29,7 +29,7 @@ int main(){
 
             if(Prog.doSaveData()){
 
-                Prog.getRate();
+                Prog.getRatePresets(Data.getTemporalRates(), Data.getMonthlyRates());
                 Prog.getSavePresets(Data.getSaveType(), Data.getEncryptData(), Data.getHash());
                 Prog.setSaveData(false);
 

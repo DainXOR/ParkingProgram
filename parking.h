@@ -13,13 +13,24 @@ public:
     void UserMenu();
     void AdminMenu();
 
+    //*********  Setter functions  *********//
     void setIsAdmin(bool Status);
     void setIsRunning(bool Status);
     void setSavePresets(short SaveType = 0, std::pair<int, int> EncryptData = std::pair<int, int>(0, 0), std::string HashType = "");
 
+    void setRatePresets(int TemporalRates[3], int MonthlyRates[3]);
+    void setRatePresets(int CarTRate, int BikeTRate, int BicycleTRate, int CarMRate,int BikeMRate, int BicycleMRate);
+
+    void setSaveAdmins(bool Status);
+    void setSaveUsers(bool Status);
+    void setSaveData(bool Status);
+
+    //*********  Getter functions  *********//
     bool getIsAdmin();
     bool getIsRunning();
     void getSavePresets(short &SaveType, std::pair<int, int> &EncryptData, std::string &HashType);
+    void getRatePresets(int *TemporalRates, int *MonthlyRates);
+    void getRatePresets(int &CarTRate, int &BikeTRate, int &BicycleTRate, int &CarMRate, int &BikeMRate, int &BicycleMRate);
 
     std::map<int, std::string[3]>& getMainData();
     std::map<int, std::map<int, std::string[4]>>& getFloorsData();
@@ -27,13 +38,9 @@ public:
     std::map<std::string, std::string[3]>& getUsersData();
 
     bool doSaveAdmins();
-    void setSaveAdmins(bool Status);
-
     bool doSaveUsers();
-    void setSaveUsers(bool Status);
-
     bool doSaveData();
-    void setSaveData(bool Status);
+
 
 protected:
     bool Parking();

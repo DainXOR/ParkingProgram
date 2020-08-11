@@ -18,7 +18,7 @@ int main(){
 
     while(Prog.getIsRunning()){
 
-        while(Prog.getIsAdmin() && !Prog.exit()){
+        while(Prog.getIsAdmin() && Prog.getIsRunning()){
 
             Prog.AdminMenu();
 
@@ -36,15 +36,23 @@ int main(){
             }
         }
 
-        while(!Prog.getIsAdmin() && !Prog.exit()){
+        while(!Prog.getIsAdmin() && Prog.getIsRunning()){
 
             Prog.UserMenu();
 
-            if(Prog.doSaveUsers())
+            if(Prog.doSaveUsers()){
                 Data.setData(Prog.getMainData());
                 Data.setData(Prog.getFloorsData());
-
                 Prog.setSaveUsers(false);
+            }
+
+            if(Prog.doSaveData()){
+
+                Prog.getRatePresets(Data.getTemporalRates(), Data.getMonthlyRates());
+                Prog.getSavePresets(Data.getSaveType(), Data.getEncryptData(), Data.getHash());
+                Prog.setSaveData(false);
+
+            }
         }
     }
 

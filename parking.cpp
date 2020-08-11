@@ -40,24 +40,24 @@ void MainProg::Setup(){
         system("cls");
         printf("%s\n\n", "Elija las tarifas de parqueo por hora.");
         printf("%s", "Parqueo de carro temporal: ");
-        scanf("%i\n", CostosT[0]);
+        std::cin >> CostosT[0];
 
         printf("%s", "Parqueo de moto temporal: ");
-        scanf("%i\n", CostosT[1]);
+        std::cin >> CostosT[1];
 
         printf("%s", "Parqueo de bicicleta temporal: ");
-        scanf("%i\n", CostosT[2]);
+        std::cin >> CostosT[2];
 
         system("cls");
         printf("%s\n\n", "Elija las tarifas de parqueo por semana.");
         printf("%s", "Parqueo de carro mensual: ");
-        scanf("%i\n", CostosM[0]);
+        std::cin >> CostosM[0];
 
         printf("%s", "Parqueo de moto mensual: ");
-        scanf("%i\n", CostosM[1]);
+        std::cin >> CostosM[1];
 
         printf("%s", "Parqueo de bicicleta mensual: ");
-        scanf("%i\n", CostosM[2]);
+        std::cin >> CostosM[2];
 
     }
 
@@ -74,7 +74,7 @@ void MainProg::Setup(){
 
 }
 
-bool MainProg::exit(){return IsRunning;}
+
 
 void MainProg::UserMenu(){
 
@@ -85,31 +85,32 @@ void MainProg::UserMenu(){
 
         printf("\n\n1) %s\n\n2) %s\n\n", "Iniciar sesion.", "Registrarse.");
         printf("%s", "Opcion: ");
-        scanf("%i", Ans);
+        std::cin >> Ans;
 
         Ans = Ans <= 1? 1 : Ans == 256? 256 : 2;
 
         switch(Ans){
 
         case 1: Cont = Login(); break;
-        case 2: Cont = Register(); break;
+        case 2: Cont = Register(); setSaveUsers(Cont); break;
         default: return;
 
         }
 
         if(Cont){
 
-            printf("\n\n1) %s\n\n2) %s\n\n", "Parquear.", "Retirar.");
+            printf("\n\n1) %s\n\n2) %s\n\n3) %s\n\n", "Parquear.", "Retirar.", "Salir.");
             printf("%s", "Opcion: ");
-            scanf("%i", Ans);
+            std::cin >> Ans;
 
-            Ans = Ans <= 1? 1 : 2;
+            Ans = Ans <= 1? 1 : Ans >= 3? 3 : Ans;
 
             if(Login() || Register())
                 switch(Ans){
 
-                case 1: Parking(); break;
-                case 2: PickUp(); break;
+                case 1: setSaveData(Parking()); break;
+                case 2: setSaveData(PickUp()); break;
+                case 3: return;
 
                 }
 
@@ -189,6 +190,7 @@ void MainProg::AdminMenu(){
     static bool InMenu = true;
 
     if(InMenu){
+        system("cls");
         printf("%s\n\n\n 1) %s\n\n 2) %s\n\n 3) %s\n\n 4) %s\n\n", "Modo administrador", "Registrar nuevo administrador.", "Iniciar sesion.", "Salir del modo administrador.", "Salir del programa.");
         std::cin >> Ans;
         Ans = Ans <= 1? 1 : Ans >= 4? 4 : Ans;
@@ -204,20 +206,83 @@ void MainProg::AdminMenu(){
     }
 }
 
+//***************************  Setter functions  ***************************//
 void MainProg::setIsAdmin(bool Status){Admin = Status;}
 void MainProg::setIsRunning(bool Status){IsRunning = Status;}
+void MainProg::setSavePresets(short ST, std::pair<int, int> ED, std::string HT){
 
-bool MainProg::getIsAdmin(){return Admin;}
-bool MainProg::getIsRunning(){return IsRunning;}
-
-void MainProg::getRatePresets(int *TemporalRates, int *MonthlyRates){
-
-    TemporalRates[2];
+    SaveType = ST;
+    EncryptData = ED;
+    Hash = HT;
+    return;
 
 }
 
-void MainProg::getRatePresets(int &CarTRate, int &BikeTRate, int &BicycleTRate, int &CarMRate, int &BikeMRate, int &BicycleMRate)
+void MainProg::setRatePresets(int TR[3], int MR[3]){
+
+    TemporalRates[0] = TR[0];
+    TemporalRates[1] = TR[1];
+    TemporalRates[2] = TR[2];
+
+    MonthlyRates[0] = MR[0];
+    MonthlyRates[1] = MR[1];
+    MonthlyRates[2] = MR[2];
+
+    return;
+
+}
+
+void MainProg::setRatePresets(int CarTRate, int BikeTRate, int BicycleTRate, int CarMRate, int BikeMRate, int BicycleMRate){
+
+    TemporalRates[0] = CarTRate;
+    TemporalRates[1] = BikeTRate;
+    TemporalRates[2] = BicycleTRate;
+
+    MonthlyRates[0] = CarMRate;
+    MonthlyRates[1] = BikeMRate;
+    MonthlyRates[2] = BicycleMRate;
+
+    return;
+
+}
+
+void MainProg::setSaveAdmins(bool Status){SaveAdmins = Status;}
+void MainProg::setSaveUsers(bool Status){SaveUsers = Status;}
+void MainProg::setSaveData(bool Status){SaveData = Status;}
+
+//***************************  Getter functions  ***************************//
+bool MainProg::getIsAdmin(){return Admin;}
+bool MainProg::getIsRunning(){return IsRunning;}
+
+void MainProg::getSavePresets(short &SaveType, std::pair<int, int> &EncryptData, std::string &HashType)
 {
+
+}
+void MainProg::getRatePresets(int *TR, int *MR){
+
+    TR[0] = TemporalRates[0];
+    TR[1] = TemporalRates[1];
+    TR[2] = TemporalRates[2];
+
+    MR[0] = MonthlyRates[0];
+    MR[1] = MonthlyRates[1];
+    MR[2] = MonthlyRates[2];
+
+    return;
+
+}
+
+void MainProg::getRatePresets(int &CarTRate, int &BikeTRate, int &BicycleTRate, int &CarMRate, int &BikeMRate, int &BicycleMRate){
+
+    CarTRate = TemporalRates[0];
+    BikeTRate = TemporalRates[1];
+    BicycleTRate = TemporalRates[2];
+
+    CarMRate = MonthlyRates[0];
+    BikeMRate = MonthlyRates[1];
+    BicycleMRate = MonthlyRates[2];
+
+    return;
 
 }
 
@@ -227,16 +292,21 @@ std::map<std::string, std::string> &MainProg::getAdminsData(){return AdminsData;
 std::map<std::string, std::string[3]> &MainProg::getUsersData(){return UsersData;}
 
 bool MainProg::doSaveAdmins(){return SaveAdmins;}
-void MainProg::setSaveAdmins(bool Status){SaveAdmins = Status;}
-
 bool MainProg::doSaveUsers(){return SaveUsers;}
-void MainProg::setSaveUsers(bool Status){SaveUsers = Status;}
-
 bool MainProg::doSaveData(){return SaveData;}
-void MainProg::setSaveData(bool Status){SaveData = Status;}
 
-bool MainProg::Parking()
-{
+
+bool MainProg::Parking(){
+
+    std::pair<int, int> Spot = SearchSpot(UsersData[ActUser][2]);
+
+    if(Spot.first == 0){
+        system("cls");
+        printf("Lamentablemente no hay espacio para guardar el vehiculo, le recomendamos regresar mas tarde.\n");
+        system("pause");
+        return false;
+    }
+
     return 1;
 }
 
@@ -245,9 +315,75 @@ bool MainProg::PickUp()
     return 1;
 }
 
-bool MainProg::Register()
-{
-    return 1;
+bool MainProg::Register(){
+
+    bool GoMenu = false;
+
+    do{
+
+        system("cls");
+        printf("\n\n %s", "Ingrese el nombre de usuario: ");
+        std::cin >> ActUser;
+
+        printf("\n\n %s", "Ingrese la contraseña: ");
+        std::cin >> UserPass;
+
+        if(VerifyUser(ActUser, UserPass)){
+
+            printf("%s\n\n", "Los datos ingresados ya existen, por favor intente nuevamente.\n");
+            printf("%s", "Si desea volver al menu ingrese '0' (cero).");
+            std::cin >> GoMenu;
+
+            if((GoMenu = !GoMenu))
+                return false;
+
+        }
+        else{
+
+            std::string License, Type;
+            int opt = 0;
+
+            do{
+
+                system("cls");
+                printf("Ingrese los datos de su vehiculo\n\nPlaca: ");
+                std::cin >> License;
+
+                if(VerifyVehicle(License))
+                    printf("La placa del vehiculo ya ha sido registrada, por favor intente nuevamente.\n");
+
+                else
+                    break;
+
+            }while(true);
+
+            printf("\nTipo de vehiculo:\n\n1) Carro\n2) Moto\n3) Bicicleta\n\nOpcion: ");
+            std::cin >> opt;
+
+            system("cls");
+            printf("Guardando datos...");
+
+            opt = opt <= 1? 1 : opt >= 3? 3 : opt;
+
+            UsersData[ActUser][0] = UserPass; UsersData[ActUser][1] = License;
+
+            switch(opt){
+
+            case 1: UsersData[ActUser][2] = "C"; break;
+            case 2: UsersData[ActUser][2] = "M"; break;
+            case 3: UsersData[ActUser][2] = "B"; break;
+
+            }
+
+            setSaveUsers(true);
+            return true;
+
+        }
+
+    }while(!GoMenu);
+
+    return false;
+
 }
 
 bool MainProg::RegisterAdmin(){
@@ -283,6 +419,44 @@ bool MainProg::RegisterAdmin(){
 
     return false;
 
+}
+
+bool MainProg::Login(){
+
+    do{
+
+        int Opt = 0;
+
+        system("cls");
+        printf("Ingrese sus datos\n\nNombre de usuario: ");
+        std::cin >> ActUser;
+
+        printf("\nContraseña: ");
+        std::cin >> UserPass;
+
+        if(VerifyUser(ActUser, UserPass)){
+            system("cls");
+            printf("Bienvenido/a %s\n", ActUser.data());
+            break;
+        }
+
+        else{
+            system("cls");
+            printf("Su nombre o contraseña son incorrectos, por favor intente nuevamente.");
+            printf("Si no se ha registrado regrese al menu e ingrese en la opcion 'Registrarse'.");
+            printf("Para regresar al menu ingrese '1', de lo contrario presione la tecla 'Enter'.");
+            std::cin >> Opt;
+
+            if(Opt == 1){
+                system("cls");
+                printf("Regresando al menu...");
+                return false;
+            }
+        }
+
+    }while(true);
+
+    return true;
 }
 
 bool MainProg::LoginAdmin(){
@@ -389,6 +563,34 @@ bool MainProg::VerifyAdmin(std::string Name, std::string Pass){
 
 }
 
+bool MainProg::VerifyUser(std::string Name, std::string Pass){
+
+    for(auto User : UsersData)
+        if(User.first == Name && User.second[0] == Pass)
+            return true;
+
+    return false;
+
+}
+
+bool MainProg::VerifyVehicle(std::string Lc, std::string Name, std::string Pass){
+
+    if(Name == "" && Pass == ""){
+        for(auto License : UsersData)
+            if(License.second[1] == Lc)
+                return true;
+    }
+
+    else{
+        for(auto User : UsersData)
+            if(User.first == Name && User.second[0] == Pass && User.second[1] == Lc)
+                return true;
+    }
+
+    return false;
+
+}
+
 bool MainProg::ChangeCosts(){
 
     int Opt[2] = {0, 0};
@@ -398,17 +600,17 @@ bool MainProg::ChangeCosts(){
     printf("|---------------------------------------------------------------------------------|\n");
     printf("|    Vehiculo               Tipo               Precio               Cobra cada    |\n");
     printf("|---------------------------------------------------------------------------------|\n");
-    printf("|    Carro                Temporal              $%i                  Hora       |\n", TarifasTemporal[0]);
+    printf("|    Carro                Temporal              $%i                  Hora       |\n", TemporalRates[0]);
     printf("|---------------------------------------------------------------------------------|\n");
-    printf("|    Moto                 Temporal              $%i                  Hora       |\n", TarifasTemporal[1]);
+    printf("|    Moto                 Temporal              $%i                  Hora       |\n", TemporalRates[1]);
     printf("|---------------------------------------------------------------------------------|\n");
-    printf("|    Bicicleta            Temporal              $%i                   Hora       |\n", TarifasTemporal[2]);
+    printf("|    Bicicleta            Temporal              $%i                   Hora       |\n", TemporalRates[2]);
     printf("|---------------------------------------------------------------------------------|\n");
-    printf("|    Carro                Mensual               $%i                Semana      |\n", TarifasMensual[0]);
+    printf("|    Carro                Mensual               $%i                Semana      |\n", MonthlyRates[0]);
     printf("|---------------------------------------------------------------------------------|\n");
-    printf("|    Moto                 Mensual               $%i                Semana      |\n", TarifasMensual[1]);
+    printf("|    Moto                 Mensual               $%i                Semana      |\n", MonthlyRates[1]);
     printf("|---------------------------------------------------------------------------------|\n");
-    printf("|    Bicicleta            Mensual               $%i                 Semana      |\n", TarifasMensual[2]);
+    printf("|    Bicicleta            Mensual               $%i                 Semana      |\n", MonthlyRates[2]);
     printf("|_________________________________________________________________________________|\n\n");
 
     printf("Desea cambiar alguna tarifa?\n\n1) Si\n2) No\n\nOpcion: ");
@@ -437,8 +639,8 @@ bool MainProg::ChangeCosts(){
 
             switch(Opt[0]){
 
-            case 1: TarifasTemporal[Opt[1] - 1] = Value; break;
-            case 2: TarifasMensual[Opt[1] - 1] = Value; break;
+            case 1: TemporalRates[Opt[1] - 1] = Value; break;
+            case 2: MonthlyRates[Opt[1] - 1] = Value; break;
 
             }
 
@@ -557,9 +759,20 @@ void MainProg::showGeneralData(){
 
     for(auto Level : MainData){
 
+        std::string VType;
+
+        if(Level.second[1] == "C")
+            VType = "Carros";
+
+        else if(Level.second[1] == "M")
+            VType = "Motos";
+
+        else if(Level.second[1] == "B")
+            VType = "Bicicletas";
+
         printf("|-----------------------------------------------------------------------------------|\n");
-        printf("|   %i            %i                  %i                 %s                 %3.2f%%     |\n",
-               Level.first, int(StrToInt(Level.second[0]) * (StrToDec(Level.second[2])) / 100), StrToInt(Level.second[0]), Level.second[1].data(), StrToDec(Level.second[2]));
+        printf("|   %i            %i                  %i                %s             %3.2f%%     |\n",
+               Level.first, int(StrToInt(Level.second[0]) * (StrToDec(Level.second[2])) / 100), StrToInt(Level.second[0]), VType.data(), StrToDec(Level.second[2]));
 
     }
 
@@ -622,10 +835,7 @@ void MainProg::searchVehicle(std::string License){
 
 }
 
-bool MainProg::Login()
-{
-    return 1;
-}
+
 
 
 

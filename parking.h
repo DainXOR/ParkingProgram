@@ -8,7 +8,6 @@ class MainProg
 public:
     MainProg();
     void Setup();
-    bool exit();
 
     void UserMenu();
     void AdminMenu();
@@ -41,8 +40,9 @@ public:
     bool doSaveUsers();
     bool doSaveData();
 
-
 protected:
+    std::pair<int, int> SearchSpot(std::string VehicleType);
+
     bool Parking();
     bool PickUp();
 
@@ -53,8 +53,8 @@ protected:
 
 private:
     bool VerifyAdmin(std::string Name, std::string Pass);
-    bool VerifyAccount(std::string Name, std::string Pass);
-    bool VerifyVehicle(std::string Name, std::string Pass, std::string License);
+    bool VerifyUser(std::string Name, std::string Pass);
+    bool VerifyVehicle(std::string License, std::string Name = "", std::string Pass = "");
 
     bool ChangeCosts();
     bool ChangeSavePresets();
@@ -69,14 +69,17 @@ private:
     std::map<std::string, std::string> AdminsData;
     std::map<std::string, std::string[3]> UsersData;
 
+    std::string ActUser;
+    std::string UserPass;
+
     bool Admin;
     bool IsRunning;
     bool SaveAdmins;
     bool SaveUsers;
     bool SaveData;
 
-    int TarifasTemporal[3];
-    int TarifasMensual[3];
+    int TemporalRates[3];
+    int MonthlyRates[3];
 
     short SaveType;
     std::pair<int, int> EncryptData;

@@ -33,6 +33,16 @@ short &FileHandler::getSaveType(){return SaveType;}
 std::pair<int, int> &FileHandler::getEncryptData(){return EncryptData;}
 std::string &FileHandler::getHash(){return HashType;}
 
+int *FileHandler::getTemporalRates()
+{
+
+}
+
+int *FileHandler::getMonthlyRates()
+{
+
+}
+
 //******************  Load functions  ******************//
 bool FileHandler::LoadData(){
 

@@ -41,17 +41,13 @@ int main(){
             Prog.UserMenu();
 
             if(Prog.doSaveUsers()){
-                Data.setData(Prog.getMainData());
-                Data.setData(Prog.getFloorsData());
+                Data.setData(Prog.getUsersData());
                 Prog.setSaveUsers(false);
             }
-
             if(Prog.doSaveData()){
-
-                Prog.getRatePresets(Data.getTemporalRates(), Data.getMonthlyRates());
-                Prog.getSavePresets(Data.getSaveType(), Data.getEncryptData(), Data.getHash());
+                Data.setData(Prog.getMainData());
+                Data.setData(Prog.getFloorsData());
                 Prog.setSaveData(false);
-
             }
         }
     }

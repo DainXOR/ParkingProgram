@@ -36,6 +36,24 @@ int StrToInt(std::string Str){
 
 }
 
+std::string IntToStr(int Num){
+
+    std::string StrNum;
+
+    for(; Num > 0;){
+
+        StrNum += (Num % 10) + 48;
+        Num /= 10;
+
+    }
+
+    std::string InvStrNum(StrNum.rbegin(), StrNum.rend());
+
+    return InvStrNum;
+
+}
+
+
 float StrToDec(std::string Str){
 
     int IntNum = 0;
@@ -62,6 +80,16 @@ float StrToDec(std::string Str){
         DecNum /= 10;
 
     return (IntNum + DecNum);
+
+}
+
+std::string DecToStr(float Num){
+
+    int IntPart = int(Num);
+    float DecPart = Num - IntPart;
+
+    std::string CompNum = IntToStr(IntPart) + "." + IntToStr(int(DecPart * 100));
+    return CompNum;
 
 }
 

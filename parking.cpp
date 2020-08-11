@@ -306,6 +306,23 @@ bool MainProg::Parking(){
         system("pause");
         return false;
     }
+    else{
+
+        int MaxSpots;
+        float Porcent;
+
+        system("cls");
+        printf("Su vehiculo esta siento parqueado, ya puede retirarse y disfrutar de nuestras instalaciones.\n\nQue tenga un buen dia.");
+
+        MaxSpots = StrToInt(MainData[Spot.first][0]);
+        Porcent = StrToDec(MainData[Spot.first][2]);
+        Porcent += 1 / MaxSpots;
+
+        {
+            std::string PorcentStr = DecToStr(Porcent);
+        }
+
+    }
 
     return 1;
 }

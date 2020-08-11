@@ -108,7 +108,21 @@ void MainProg::UserMenu(){
             if(Login() || Register())
                 switch(Ans){
 
-                case 1: setSaveData(Parking()); break;
+                case 1:{
+                    int Type;
+                    std::string TypeStr;
+                    system("cls");
+                    printf("Seleccione el tipo de parqueo que desea\n\n");
+                    showRates();
+                    printf("\n\n1) Temporal\n2) Mensual\n\nOpcion: ");
+                    std::cin >> Type;
+
+                    TypeStr = Type <= 1? "T" : "M";
+
+                    setSaveData(Parking(TypeStr));
+                    break;
+                }
+
                 case 2: setSaveData(PickUp()); break;
                 case 3: return;
 
@@ -296,7 +310,7 @@ bool MainProg::doSaveUsers(){return SaveUsers;}
 bool MainProg::doSaveData(){return SaveData;}
 
 
-bool MainProg::Parking(){
+bool MainProg::Parking(std::string ParkType){
 
     std::pair<int, int> Spot = SearchSpot(UsersData[ActUser][2]);
 
@@ -320,11 +334,17 @@ bool MainProg::Parking(){
 
         {
             std::string PorcentStr = DecToStr(Porcent);
+            MainData[Spot.first][2] = PorcentStr;
         }
 
-    }
+        FloorsData[Spot.first][Spot.second][0] = UsersData[ActUser][1];
+        FloorsData[Spot.first][Spot.second][1] = getTimeStr();
+        FloorsData[Spot.first][Spot.second][2] = getDateStr();
+        FloorsData[Spot.first][Spot.second][3] = ParkType;
+        system("pause");
+        return true;
 
-    return 1;
+    }
 }
 
 bool MainProg::PickUp()
@@ -612,23 +632,7 @@ bool MainProg::ChangeCosts(){
 
     int Opt[2] = {0, 0};
 
-    system("cls");
-    printf("Tabla de tarifas\n\n");
-    printf("|---------------------------------------------------------------------------------|\n");
-    printf("|    Vehiculo               Tipo               Precio               Cobra cada    |\n");
-    printf("|---------------------------------------------------------------------------------|\n");
-    printf("|    Carro                Temporal              $%i                  Hora       |\n", TemporalRates[0]);
-    printf("|---------------------------------------------------------------------------------|\n");
-    printf("|    Moto                 Temporal              $%i                  Hora       |\n", TemporalRates[1]);
-    printf("|---------------------------------------------------------------------------------|\n");
-    printf("|    Bicicleta            Temporal              $%i                   Hora       |\n", TemporalRates[2]);
-    printf("|---------------------------------------------------------------------------------|\n");
-    printf("|    Carro                Mensual               $%i                Semana      |\n", MonthlyRates[0]);
-    printf("|---------------------------------------------------------------------------------|\n");
-    printf("|    Moto                 Mensual               $%i                Semana      |\n", MonthlyRates[1]);
-    printf("|---------------------------------------------------------------------------------|\n");
-    printf("|    Bicicleta            Mensual               $%i                 Semana      |\n", MonthlyRates[2]);
-    printf("|_________________________________________________________________________________|\n\n");
+    showRates();
 
     printf("Desea cambiar alguna tarifa?\n\n1) Si\n2) No\n\nOpcion: ");
     std::cin >> *Opt;
@@ -765,6 +769,29 @@ bool MainProg::ChangeSavePresets(){
 
     else
         return false;
+
+}
+
+void MainProg::showRates(){
+
+    system("cls");
+    printf("Tabla de tarifas\n\n");
+    printf("|---------------------------------------------------------------------------------|\n");
+    printf("|    Vehiculo               Tipo               Precio               Cobra cada    |\n");
+    printf("|---------------------------------------------------------------------------------|\n");
+    printf("|    Carro                Temporal              $%i                  Hora       |\n", TemporalRates[0]);
+    printf("|---------------------------------------------------------------------------------|\n");
+    printf("|    Moto                 Temporal              $%i                  Hora       |\n", TemporalRates[1]);
+    printf("|---------------------------------------------------------------------------------|\n");
+    printf("|    Bicicleta            Temporal              $%i                   Hora       |\n", TemporalRates[2]);
+    printf("|---------------------------------------------------------------------------------|\n");
+    printf("|    Carro                Mensual               $%i                Semana      |\n", MonthlyRates[0]);
+    printf("|---------------------------------------------------------------------------------|\n");
+    printf("|    Moto                 Mensual               $%i                Semana      |\n", MonthlyRates[1]);
+    printf("|---------------------------------------------------------------------------------|\n");
+    printf("|    Bicicleta            Mensual               $%i                 Semana      |\n", MonthlyRates[2]);
+    printf("|_________________________________________________________________________________|\n\n");
+    return;
 
 }
 

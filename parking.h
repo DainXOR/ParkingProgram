@@ -43,7 +43,7 @@ public:
 protected:
     std::pair<int, int> SearchSpot(std::string VehicleType);
 
-    bool Parking();
+    bool Parking(std::string ParkType);
     bool PickUp();
 
     bool Register();

@@ -151,7 +151,8 @@ void FileHandler::newLoad(std::ofstream &File){
        }
        }
 
-       File << "Data.txt:Floors.txt,AdminsData.txt,UsersData.txt;";
+       File << "Data.txt:Floors.txt,AdminsData.txt,UsersData.txt;\n";
+       File << TemporalRates[0] << "," << TemporalRates[1] << "," << TemporalRates[2] << "," << MonthlyRates[0] << "," << MonthlyRates[1] << "," << MonthlyRates[2] << ";";
 
    }
 
@@ -535,7 +536,7 @@ void FileHandler::SaveData(){
 
        WriteFile << SaveType << ";\n";
        WriteFile << DataFile << ":" << FloorsFile << "," << AdminsFile << "," << UsersFile << ";\n";
-       WriteFile << TemporalRates[0] << "," << TemporalRates[1] << "," << TemporalRates[2] << "," << MonthlyRates[0] << "," << MonthlyRates[1] << "," << MonthlyRates[2];
+       WriteFile << TemporalRates[0] << "," << TemporalRates[1] << "," << TemporalRates[2] << "," << MonthlyRates[0] << "," << MonthlyRates[1] << "," << MonthlyRates[2] << ";";
        WriteFile.close();
 
        switch(SaveType){

@@ -624,11 +624,93 @@ void FileHandler::encryptSave(std::ofstream &File){
 
     switch(EncryptData.first){
 
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    default: break;
+    case 1: break;
+
+    case 2:{ // Guardado de los datos de usuarios // Traduccion a binario
+
+            std::string BinArray, CodedArray;
+
+            File.open(DataFile, std::_S_out);
+
+            if(File.fail()){
+
+                printf("[ERROR]:No se pudo abrir el archivo de datos.\n");
+                exit(-1);
+
+            }
+
+            for(auto Level : Parking){
+                for(auto Data : Level.second){
+                    for(char C : Data){
+
+                    std::string AuxStr;
+                    int AuxInt;
+
+
+                        AuxInt = TextToBin(C);
+
+                        for(int l = 0; l < 8; l++){
+
+                            AuxStr.push_back((AuxInt % 10) + 48);
+                            AuxInt /= 10;
+
+                        }
+
+                        std::string AuxStrInv(AuxStr.rbegin(), AuxStr.rend());
+                        BinArray += AuxStrInv;
+                        AuxStr.clear();
+                        AuxStrInv.clear();
+
+                    }
+
+                    BinArray += j == 3? "00101110" : "00111011";
+
+                } // Fin de traduccion a binario // Encriptacion segun lo configurado
+
+                if(EncryptType == 0){
+
+                    STR AuxArray1[400], AuxArray2[400], AuxStr;
+
+                    BinRedimension(BinArray, AuxArray1, EncryptSpace);
+                    EncryptType0(AuxArray1, AuxArray2, EncryptSpace);
+
+                    for(int j = 0; AuxArray1[j] != ""; j++)
+                        AuxArray1[j].clear();
+
+                    for(STR String : AuxArray2){
+
+                        if(String == "") break;
+                        AuxStr += String;
+
+                    }
+
+                    BinRedimension(AuxStr, AuxArray1, int(BinArray.length()));
+                    CodedArray = AuxArray1[0];
+
+                }
+
+                else
+                    CodedArray = EncryptType1(BinArray, EncryptSpace);
+
+                File << CodedArray << "\n";
+                BinArray.clear();
+                CodedArray.clear();
+
+            }
+
+            File.close();
+
+         // Fin de guardado de datos de usuarios
+
+        EncryptType2(false);
+        break;
+    }
+
+    case 3: break;
+
+    case 4: break;
+
+    default: EncryptType2(false); break;
 
     }
 

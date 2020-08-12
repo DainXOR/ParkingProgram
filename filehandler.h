@@ -6,13 +6,15 @@
 #include <string>
 #include <map>
 
+#include "Functions.h"
+
 class FileHandler
 {
 public:
     FileHandler(std::string ConfigFile = "Config.txt");
     void Destroy();
 
-    void getData(std::map<int, std::string[3]> &Parking, std::map<int,std::map<int, std::string[4]>> &Floors, std::map<std::string, std::string> &AdminsData, std::map<std::string, std::string[3]> &UsersData);
+    void getData(std::map<int, std::string[3]> &Parking, std::map<int,std::map<int, std::string[4]>> &Floors, std::map<std::string, std::string> &AdminsData, std::map<std::string, std::string[3]> &UsersData, int TemporalRates[3], int MonthlyRates[3]);
     short &getSaveType();
     std::pair<int, int> &getEncryptData();
     std::string &getHash();

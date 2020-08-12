@@ -36,6 +36,9 @@ public:
     std::map<std::string, std::string>& getAdminsData();
     std::map<std::string, std::string[3]>& getUsersData();
 
+    int *getTemporalRates();
+    int *getMonthlyRates();
+
     bool doSaveAdmins();
     bool doSaveUsers();
     bool doSaveData();

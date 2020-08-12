@@ -1,7 +1,6 @@
 #include "filehandler.h"
 
 #include <windows.h>
-//#include <conio.h>
 
 
 FileHandler::FileHandler(std::string CF)
@@ -11,6 +10,14 @@ FileHandler::FileHandler(std::string CF)
    EncryptData = std::pair<int, int>(0, 0);
    Seed = 0;
 
+   TemporalRates[0] = 0;
+   TemporalRates[1] = 0;
+   TemporalRates[2] = 0;
+
+   MonthlyRates[0] = 0;
+   MonthlyRates[1] = 0;
+   MonthlyRates[2] = 0;
+
 }
 
 void FileHandler::Destroy(){
@@ -19,12 +26,20 @@ void FileHandler::Destroy(){
 
 }
 
-void FileHandler::getData(std::map<int, std::string[3]> &P, std::map<int, std::map<int, std::string[4]>> &F, std::map<std::string, std::string> &AD, std::map<std::string, std::string[3]> &UD){
+void FileHandler::getData(std::map<int, std::string[3]> &P, std::map<int, std::map<int, std::string[4]>> &F, std::map<std::string, std::string> &AD, std::map<std::string, std::string[3]> &UD, int TR[3], int MR[3]){
 
    P = Parking;
    F = FloorsMap;
    AD = AdminsData;
    UD = UsersData;
+   TR[0] = TemporalRates[0];
+   TR[1] = TemporalRates[1];
+   TR[2] = TemporalRates[2];
+
+   MR[0] = MonthlyRates[0];
+   MR[1] = MonthlyRates[1];
+   MR[2] = MonthlyRates[2];
+
    return;
 
 }
@@ -33,15 +48,8 @@ short &FileHandler::getSaveType(){return SaveType;}
 std::pair<int, int> &FileHandler::getEncryptData(){return EncryptData;}
 std::string &FileHandler::getHash(){return HashType;}
 
-int *FileHandler::getTemporalRates()
-{
-
-}
-
-int *FileHandler::getMonthlyRates()
-{
-
-}
+int *FileHandler::getTemporalRates(){return TemporalRates;}
+int *FileHandler::getMonthlyRates(){return MonthlyRates;}
 
 //******************  Load functions  ******************//
 bool FileHandler::LoadData(){
@@ -114,59 +122,61 @@ void FileHandler::newLoad(std::ofstream &File){
    }
 
    system("cls");
-   printf("%s\n\n %s\n", "Setup terminado.", "Creando archivos...");
+   printf("%s\n\n %s\n", "Setup terminado.", "Creando archivos...\n");
 
-   {
-       File.open(ConfigFile, std::_S_out);
+   File.open(ConfigFile, std::_S_out);
 
-       if(File.fail()){
+   if(File.fail()){
 
-           // Fail message
-           File.close();
-
-       }
-       else{
-
-           switch(Opts[0]){
-
-           case 0:{
-               File << std::to_string(Opts[0]) << ";\n";
-               break;
-           }
-           case 1:{
-               File << std::to_string(Opts[0]) << ":" << std::to_string(Opts[1]) << "," << std::to_string(Opts[2]) << ";\n";
-               break;
-           }
-           case 2:{
-               File << std::to_string(Opts[0]) << ":" << (!Opts[1]? "SHA-1\n;" : Opts[1] == 1? "MD5;\n" : Opts[1] == 2? "NTLM;\n" : Opts[1] == 3? "RipeMD-128;\n" : "CRC32;\n");
-               break;
-           }
-           }
-
-           File << "Data.txt:Floors.txt,AdminsData.txt,UsersData.txt;";
-
-       }
-
+       // Fail message
        File.close();
-       File.open(DataFile, std::_S_out);
-       File.close();
-       File.open(FloorsFile, std::_S_out);
-       File.close();
-       File.open(AdminsFile, std::_S_out);
-       File.close();
-       File.open(UsersFile, std::_S_out);
-       File.close();
-
-       system("cls");
-       printf("%s\n\n %s", "Archivos creados.", "Iniciando programa principal...");
-       return;
 
    }
+   else{
+
+       switch(Opts[0]){
+
+       case 0:{
+           File << std::to_string(Opts[0]) << ";\n";
+           break;
+       }
+       case 1:{
+           File << std::to_string(Opts[0]) << ":" << std::to_string(Opts[1]) << "," << std::to_string(Opts[2]) << ";\n";
+           break;
+       }
+       case 2:{
+           File << std::to_string(Opts[0]) << ":" << (!Opts[1]? "SHA-1\n;" : Opts[1] == 1? "MD5;\n" : Opts[1] == 2? "NTLM;\n" : Opts[1] == 3? "RipeMD-128;\n" : "CRC32;\n");
+           break;
+       }
+       }
+
+       File << "Data.txt:Floors.txt,AdminsData.txt,UsersData.txt;";
+
+   }
+
+   File.close();
+   File.open(DataFile, std::_S_out);
+   File.close();
+   File.open(FloorsFile, std::_S_out);
+   File.close();
+   File.open(AdminsFile, std::_S_out);
+   File.close();
+   File.open(UsersFile, std::_S_out);
+   File.close();
+
+   printf("%s\n\n %s", "Archivos creados.\n");
+   system("cls");
+   printf("IMPORTANTE: Para ingresar como administrador debera ingresar el numero 256 en el menu de usuario.\n\n");
+   system("pause");
+   printf("Iniciando programa principal...\n");
+   return;
+
+
 }
 
 void FileHandler::LoadConfig(std::ifstream &File){
 
-   for(bool i = 0; !File.eof(); i += 1){
+   for(short i = 0; !File.eof(); i += 1){
 
        std::string Aux;
 
@@ -223,7 +233,7 @@ void FileHandler::LoadConfig(std::ifstream &File){
 
        }
 
-       if(i){
+       if(i == 1){
            std::getline(File, Aux);
            short j = 0;
 
@@ -246,6 +256,33 @@ void FileHandler::LoadConfig(std::ifstream &File){
                    default: break; //Error message
 
                    }
+               }
+           }
+       }
+
+       else if(i == 2){
+
+           std::getline(File, Aux);
+           std::string NumAux;
+           short j = 0;
+
+           for(char C : Aux){
+
+               if(C == ',' || C == ';') j++;
+
+               if(C != ',' && C != ';') NumAux += C;
+               else{
+                   switch(j){
+
+                   case 1: TemporalRates[0] = StrToInt(NumAux); break;
+                   case 2: TemporalRates[1] = StrToInt(NumAux); break;
+                   case 3: TemporalRates[2] = StrToInt(NumAux); break;
+                   case 4: MonthlyRates[0] = StrToInt(NumAux); break;
+                   case 5: MonthlyRates[1] = StrToInt(NumAux); break;
+                   case 6: MonthlyRates[2] = StrToInt(NumAux); break;
+
+                   }
+                   NumAux.clear();
                }
            }
        }
@@ -496,7 +533,8 @@ void FileHandler::SaveData(){
    else{
 
        WriteFile << SaveType << ";\n";
-       WriteFile << DataFile << ":" << FloorsFile << "," << AdminsFile << "," << UsersFile << ";";
+       WriteFile << DataFile << ":" << FloorsFile << "," << AdminsFile << "," << UsersFile << ";\n";
+       WriteFile << TemporalRates[0] << "," << TemporalRates[1] << "," << TemporalRates[2] << "," << MonthlyRates[0] << "," << MonthlyRates[1] << "," << MonthlyRates[2];
        WriteFile.close();
 
        switch(SaveType){

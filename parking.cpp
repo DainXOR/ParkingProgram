@@ -10,9 +10,9 @@ MainProg::MainProg()
     : Admin(false), IsRunning(true)
 {
 
-    SaveAdmins = false;
-    SaveUsers = false;
-    SaveData = false;
+    SaveAdmins = true;
+    SaveUsers = true;
+    SaveData = true;
 
     TemporalRates[0] = 0;
     TemporalRates[1] = 0;
@@ -90,6 +90,7 @@ void MainProg::UserMenu(){
         int Ans = 0;
         bool Cont = false;
 
+        system("cls");
         printf("\n\n1) %s\n\n2) %s\n\n", "Iniciar sesion.", "Registrarse.");
         printf("%s", "Opcion: ");
         std::cin >> Ans;
@@ -100,7 +101,7 @@ void MainProg::UserMenu(){
 
         case 1: Cont = Login(); break;
         case 2: Cont = Register(); setSaveUsers(Cont); break;
-        default: return;
+        default: Admin = true; return;
 
         }
 
@@ -148,7 +149,7 @@ void MainProg::AdminMenu(){
 
     if(InMenu){
         system("cls");
-        printf("%s\n\n\n 1) %s\n\n 2) %s\n\n 3) %s\n\n 4) %s\n\n", "Modo administrador", "Registrar nuevo administrador.", "Iniciar sesion.", "Salir del modo administrador.", "Salir del programa.");
+        printf("%s\n\n\n 1) %s\n\n 2) %s\n\n 3) %s\n\n 4) %s\n\nOpcion: ", "Modo administrador", "Registrar nuevo administrador.", "Iniciar sesion.", "Salir del modo administrador.", "Salir del programa.");
         std::cin >> Ans;
         Ans = Ans <= 1? 1 : Ans >= 4? 4 : Ans;
     }
@@ -255,6 +256,9 @@ std::map<int, std::map<int, std::string[4]>> &MainProg::getFloorsData(){return F
 std::map<std::string, std::string> &MainProg::getAdminsData(){return AdminsData;}
 std::map<std::string, std::string[3]> &MainProg::getUsersData(){return UsersData;}
 
+int *MainProg::getTemporalRates(){return TemporalRates;}
+int *MainProg::getMonthlyRates(){return MonthlyRates;}
+
 bool MainProg::doSaveAdmins(){return SaveAdmins;}
 bool MainProg::doSaveUsers(){return SaveUsers;}
 bool MainProg::doSaveData(){return SaveData;}
@@ -263,9 +267,12 @@ std::pair<int, int> MainProg::SearchSpot(std::string VehicleType){
 
     int LastSlot = 0;
 
-    for(auto Level : MainData)
+    for(auto Level : MainData){
 
-        if(StrToDec(Level.second[2]) < 100 && Level.second[1] == VehicleType)
+        std::cout << StrToDec(Level.second[2]) << "\n";
+
+        if(StrToDec(Level.second[2]) < 100 && Level.second[1] == VehicleType){
+
             for(auto Slot : FloorsData[Level.first]){
 
                 if(Slot.first > LastSlot + 1)
@@ -274,6 +281,9 @@ std::pair<int, int> MainProg::SearchSpot(std::string VehicleType){
                 else
                     LastSlot = Slot.first;
             }
+            return std::pair<int, int>(Level.first, LastSlot + 1);
+        }
+    }
 
     return std::pair<int, int>(0, 0);
 
@@ -296,13 +306,16 @@ bool MainProg::Parking(std::string ParkType){
         float Porcent;
 
         system("cls");
-        printf("Su vehiculo esta siento parqueado, ya puede retirarse y disfrutar de nuestras instalaciones.\n\nQue tenga un buen dia.");
+        printf("Su vehiculo esta siento parqueado, ya puede retirarse y disfrutar de nuestras instalaciones.\n\nQue tenga un buen dia!\n");
 
         MaxSpots = StrToInt(MainData[Spot.first][0]);
         Porcent = StrToDec(MainData[Spot.first][2]);
         Porcent += 1 / MaxSpots;
 
         MainData[Spot.first][2] = DecToStr(Porcent);
+
+        if(FloorsData[Spot.first][0][0] == "Floor Empty")
+            FloorsData[Spot.first].erase(0);
 
         FloorsData[Spot.first][Spot.second][0] = UsersData[ActUser][1];
         FloorsData[Spot.first][Spot.second][1] = getTimeStr();
@@ -317,7 +330,7 @@ bool MainProg::Parking(std::string ParkType){
 bool MainProg::PickUp(){
 
     if(VerifyVehicle(UsersData[ActUser][1]) &&
-    VerifyVehicle(UsersData[ActUser][1], ActUser, UserPass)){
+    VerifyVehicle(UsersData[ActUser][1], ActUser, UserPass) && searchVehicle(UsersData[ActUser][1], true) != std::pair<int, int>(0, 0)){
 
         system("cls");
         printf("Su vehiculo esta siendo retirado, por favor espere...\n\n");
@@ -583,9 +596,9 @@ bool MainProg::Login(){
 
         else{
             system("cls");
-            printf("Su nombre o contraseña son incorrectos, por favor intente nuevamente.");
-            printf("Si no se ha registrado regrese al menu e ingrese en la opcion 'Registrarse'.");
-            printf("Para regresar al menu ingrese '1', de lo contrario presione la tecla 'Enter'.");
+            printf("Su nombre o contraseña son incorrectos, por favor intente nuevamente.\n");
+            printf("Si no se ha registrado regrese al menu e ingrese en la opcion 'Registrarse'.\n");
+            printf("Para regresar al menu ingrese '1', de lo contrario presione la tecla 'Enter'.\n");
             std::cin >> Opt;
 
             if(Opt == 1){
@@ -620,73 +633,76 @@ bool MainProg::LoginAdmin(){
             printf("\n\n%s\n\n", "Los datos ingresados no existen, por favor intente nuevamente.");
             printf("%s", "Si desea volver al menu ingrese '0' (cero).");
             std::cin >> GoMenu;
-
         }
-        else{
+        else
+            break;
 
-            int Ans = 0;
+    }while(true);
 
+    do{
+        int Ans = 0;
+
+        system("cls");
+        printf("\n\n1) %s\n\n2) %s\n\n3) %s\n\n4) %s\n\n5) %s\n\n6) %s\n\nOpcion: ", "Verificar ocupacion total.", "Verificar ocupacion por pisos.", "Buscar vehiculo.", "Cambiar tarifas.", "Cambiar datos de guardado.", "Salir.");
+        std::cin >> Ans;
+
+        Ans = Ans <= 1? 1 : Ans >= 6? 6 : Ans;
+
+        switch(Ans){
+
+        case 1: showGeneralData(); break; // Tabla general
+
+        case 2:{
+
+            int level;
             system("cls");
-            printf("\n\n1) %s\n\n2) %s\n\n3) %s\n\n4) %s\n\n5) %s\n\n6) %s", "Verificar ocupacion total.", "Verificar ocupacion por pisos.", "Buscar vehiculo.", "Cambiar tarifas.", "Cambiar datos de guardado.", "Salir.");
-            std::cin >> Ans;
+            printf("%s", "Ingrese el numero del nivel: ");
+            std::cin >> level;
+            showLevelData(level);
+            break;
 
-            Ans = Ans <= 1? 1 : Ans >= 6? 6 : Ans;
+        } // Pedir piso y mostrar tabla del piso
 
-            switch(Ans){
+        case 3:{
 
-            case 1: showGeneralData(); break; // Tabla general
+            std::string License;
+            system("cls");
+            printf("%s", "Ingrese la placa del vehiculo: ");
+            std::cin >> License;
+            searchVehicle(License);
+            break;
 
-            case 2:{
+        } // Pedir placa, si esta mostrar datos de estacionamiento, sino, indicar que no esta
 
-                int level;
-                system("cls");
-                printf("%s", "Ingrese el numero del nivel: ");
-                std::cin >> level;
-                showLevelData(level);
-                break;
+        case 4:{
 
-            } // Pedir piso y mostrar tabla del piso
+            if(doSaveData())
+                ChangeCosts();
 
-            case 3:{
+            else
+                setSaveData(ChangeCosts());
 
-                std::string License;
-                system("cls");
-                printf("%s", "Ingrese la placa del vehiculo: ");
-                std::cin >> License;
-                searchVehicle(License);
-                break;
-
-            } // Pedir placa, si esta mostrar datos de estacionamiento, sino, indicar que no esta
-
-            case 4:{
-
-                if(doSaveData())
-                    ChangeCosts();
-
-                else
-                    setSaveData(ChangeCosts());
-
-                break;
-
-            }
-
-            case 5:{
-
-                if(doSaveData())
-                    ChangeSavePresets();
-
-                else
-                    setSaveData(ChangeSavePresets());
-
-                break;
-
-            }
-
-            case 6: GoMenu = true; break;
-
-            }
+            break;
 
         }
+
+        case 5:{
+
+            if(doSaveData())
+                ChangeSavePresets();
+
+            else
+                setSaveData(ChangeSavePresets());
+
+            break;
+
+        }
+
+        case 6: GoMenu = true; break;
+
+        }
+
+
 
     }while(!GoMenu);
 
@@ -985,9 +1001,11 @@ std::pair<int, int> MainProg::searchVehicle(std::string License, bool Return){
 
     int Found = 0;
 
-    system("cls");
-    printf("|------------------------------------------------------------------------------------------|\n");
-    printf("|  Nivel        Celda        Placa         Hora y Fecha Ingreso        Tipo de Estamiento  |\n");
+    if(!Return){
+        system("cls");
+        printf("|------------------------------------------------------------------------------------------|\n");
+        printf("|  Nivel        Celda        Placa         Hora y Fecha Ingreso        Tipo de Estamiento  |\n");
+    }
 
     for(auto Level : FloorsData)
         for(auto Slot : Level.second)
@@ -996,15 +1014,19 @@ std::pair<int, int> MainProg::searchVehicle(std::string License, bool Return){
                 if(Return) return std::pair<int, int>(Level.first, Slot.first);
 
                 Found++;
-                printf("|------------------------------------------------------------------------------------------|\n");
-                printf("|    %i            %i         %s           %s %s                   %s          |\n",
-                       Level.first, Slot.first, Slot.second[0].data(), Slot.second[1].data(), Slot.second[2].data(), Slot.second[3].data());
+
+                if(!Return){
+                    printf("|------------------------------------------------------------------------------------------|\n");
+                    printf("|    %i            %i         %s           %s %s                   %s          |\n",
+                           Level.first, Slot.first, Slot.second[0].data(), Slot.second[1].data(), Slot.second[2].data(), Slot.second[3].data());
+                }
 
             }
 
-    printf("|__________________________________________________________________________________________|\n");
+    if(!Return)
+        printf("|__________________________________________________________________________________________|\n");
 
-    if(!Found){
+    if(!Found && !Return){
 
         system("cls");
         printf("\nNo se han encontrado vehiculos con la placa especificada.\n\n");

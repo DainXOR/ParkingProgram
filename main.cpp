@@ -9,7 +9,7 @@ int main(){
 
 
     if(Data.LoadData())
-        Data.getData(Prog.getMainData(), Prog.getFloorsData(), Prog.getAdminsData(), Prog.getUsersData());
+        Data.getData(Prog.getMainData(), Prog.getFloorsData(), Prog.getAdminsData(), Prog.getUsersData(), Prog.getTemporalRates(), Prog.getMonthlyRates());
 
     else{
         Prog.Setup();

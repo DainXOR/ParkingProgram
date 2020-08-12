@@ -81,32 +81,31 @@ bool FileHandler::LoadData(){
 
 void FileHandler::newLoad(std::ofstream &File){
 
-   int Data;
-   int Opts[3];
+   int Opts;
 
    printf("%s\n\n %s\n\n", "Setup del lector de archivos","Elija los valores del programa, si ingresa '-1' se elegiran los valores por defecto.");
    printf("%s\n\n 1) %s\n 2) %s\n 3) %s\n\n", "Tipo de guardado de datos:", "Sin seguridad.", "Con encriptado.", "Con algoritmo hash.");
    printf("%s", "Opcion: ");
-   scanf("%i", &Data);
-   Data--;
-   Data = Data > 2? 2 : Data;
-   Opts[0] = Data;
+   std::cin >> SaveType;
+   SaveType--;
+   SaveType = SaveType > 2? 2 : SaveType < 0? 0 : SaveType;
 
-   switch(Data){
+   switch(SaveType){
 
    case 1:{
        system("cls");
        printf("%s\n\n 1) %s\n 2) %s\n 3) %s\n 4) %s\n\n", "Tipo de encriptacion:", "Corrimiento de bits.", "Intercambio de bits.", "Intercalado de bits", "Mezclado aleatorio");
        printf("%s", "Opcion: ");
-       scanf("%i", &Opts[1]);
+       std::cin >> Opts;
 
-       Opts[1] = Opts[1] >= 3? 3 : Opts[1];
-       Opts[1]--;
+       Opts = Opts >= 3? 3 : Opts;
+       Opts--;
+       EncryptData.first = Opts;
 
        system("cls");
-       printf("%s\n\n", !Opts[1]? "Corrimiento de bits" : Opts[1] == 1? "Intercambio de bits" : Opts[1] == 2? "Intercalado de bits" : "Mezclado aleatorio");
+       printf("%s\n\n", !Opts? "Corrimiento de bits" : Opts == 1? "Intercambio de bits" : Opts == 2? "Intercalado de bits" : "Mezclado aleatorio");
        printf("%s","Cantidad de bits agrupados: ");
-       scanf("%i", &Opts[2]);
+       std::cin >> EncryptData.second;
 
        break;
    }
@@ -114,10 +113,20 @@ void FileHandler::newLoad(std::ofstream &File){
        system("cls");
        printf("%s\n\n 1) %s\n 2) %s\n 3) %s\n 4) %s\n 5) %s\n\n", "Tipo de hash:", "SHA-1.", "MD5", "NTLM", "RipeMD-128", "CRC32");
        printf("%s", "Opcion: ");
-       scanf("%i", &Opts[1]);
+       std::cin >> Opts;
 
-       Opts[1] = Opts[1] >= 5? 5 : Opts[1];
-       Opts[1]--;
+       Opts = Opts >= 5? 5 : Opts <= 1? 1 : Opts;
+
+       switch(Opts){
+
+       case 1: HashType = "SHA-1"; break;
+       case 2: HashType = "DM5"; break;
+       case 3: HashType = "NTLM"; break;
+       case 4: HashType = "RipeMD-128" ; break;
+       case 5: HashType = "CRC32"; break;
+
+       }
+
        break;
    }
    }
@@ -135,18 +144,18 @@ void FileHandler::newLoad(std::ofstream &File){
    }
    else{
 
-       switch(Opts[0]){
+       switch(SaveType){
 
        case 0:{
-           File << std::to_string(Opts[0]) << ";\n";
+           File << std::to_string(SaveType) << ";\n";
            break;
        }
        case 1:{
-           File << std::to_string(Opts[0]) << ":" << std::to_string(Opts[1]) << "," << std::to_string(Opts[2]) << ";\n";
+           File << std::to_string(SaveType) << ":" << std::to_string(EncryptData.first) << "," << std::to_string(EncryptData.second) << ";\n";
            break;
        }
        case 2:{
-           File << std::to_string(Opts[0]) << ":" << (!Opts[1]? "SHA-1\n;" : Opts[1] == 1? "MD5;\n" : Opts[1] == 2? "NTLM;\n" : Opts[1] == 3? "RipeMD-128;\n" : "CRC32;\n");
+           File << std::to_string(SaveType) << ":" << HashType << ";\n";
            break;
        }
        }

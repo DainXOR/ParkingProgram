@@ -13,6 +13,7 @@ int main(){
 
     else{
         Prog.Setup();
+        Data.setData(Prog.getTemporalRates(), Prog.getMonthlyRates());
         Data.setData(Prog.getAdminsData());
     }
 
@@ -23,6 +24,7 @@ int main(){
             Prog.AdminMenu();
 
             if(Prog.doSaveAdmins()){
+                Prog.getRatePresets(Data.getTemporalRates(), Data.getMonthlyRates());
                 Data.setData(Prog.getAdminsData());
                 Prog.setSaveAdmins(false);
             }

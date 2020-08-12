@@ -1,4 +1,5 @@
 #include "filehandler.h"
+#include "filehandler.h"
 
 #include <windows.h>
 
@@ -712,3 +713,39 @@ void FileHandler::setData(std::map<int, std::string[3]> &P){Parking = P; SaveDat
 void FileHandler::setData(std::map<int, std::map<int, std::string [4]>> &F){FloorsMap = F; SaveData(); return;}
 void FileHandler::setData(std::map<std::string, std::string> &AD){AdminsData = AD; SaveData(); return;}
 void FileHandler::setData(std::map<std::string, std::string[3]> &UD){UsersData = UD; SaveData(); return;}
+void FileHandler::setData(int *TRates, int *MRates){
+
+    TemporalRates[0] = TRates[0];
+    TemporalRates[1] = TRates[1];
+    TemporalRates[2] = TRates[2];
+
+    MonthlyRates[0] = MRates[0];
+    MonthlyRates[1] = MRates[1];
+    MonthlyRates[2] = MRates[2];
+
+    SaveData();
+    return;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

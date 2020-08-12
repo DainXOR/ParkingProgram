@@ -42,34 +42,27 @@ void MainProg::Setup(){
 
     }
 
-    {
+    system("cls");
+    printf("%s\n\n", "Elija las tarifas de parqueo por hora.");
+    printf("%s", "Parqueo de carro temporal: ");
+    std::cin >> TemporalRates[0];
 
-        int CostosT[3];
-        int CostosM[3];
+    printf("%s", "Parqueo de moto temporal: ");
+    std::cin >> TemporalRates[1];
 
-        system("cls");
-        printf("%s\n\n", "Elija las tarifas de parqueo por hora.");
-        printf("%s", "Parqueo de carro temporal: ");
-        std::cin >> CostosT[0];
+    printf("%s", "Parqueo de bicicleta temporal: ");
+    std::cin >> TemporalRates[2];
 
-        printf("%s", "Parqueo de moto temporal: ");
-        std::cin >> CostosT[1];
+    system("cls");
+    printf("%s\n\n", "Elija las tarifas de parqueo por semana.");
+    printf("%s", "Parqueo de carro mensual: ");
+    std::cin >> MonthlyRates[0];
 
-        printf("%s", "Parqueo de bicicleta temporal: ");
-        std::cin >> CostosT[2];
+    printf("%s", "Parqueo de moto mensual: ");
+    std::cin >> MonthlyRates[1];
 
-        system("cls");
-        printf("%s\n\n", "Elija las tarifas de parqueo por semana.");
-        printf("%s", "Parqueo de carro mensual: ");
-        std::cin >> CostosM[0];
-
-        printf("%s", "Parqueo de moto mensual: ");
-        std::cin >> CostosM[1];
-
-        printf("%s", "Parqueo de bicicleta mensual: ");
-        std::cin >> CostosM[2];
-
-    }
+    printf("%s", "Parqueo de bicicleta mensual: ");
+    std::cin >> MonthlyRates[2];
 
     {
 

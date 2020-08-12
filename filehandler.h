@@ -45,6 +45,7 @@ public:
     void setData(std::map<int,std::map<int, std::string[4]>> &Floors);
     void setData(std::map<std::string, std::string> &AdminsData);
     void setData(std::map<std::string, std::string[3]> &UsersData);
+    void setData(int *TRates, int *MRates);
 
     void setTemporalRates(int TemporalRatesArray[3]);
     void setTemporalRates(int CarTRate, int BikeTRate, int BicycleTRate);

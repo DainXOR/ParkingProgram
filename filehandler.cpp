@@ -515,11 +515,75 @@ void FileHandler::normalLoad(std::ifstream &File){
 
 }
 
-void FileHandler::encryptLoad(std::ifstream &){
+void FileHandler::encryptLoad(std::ifstream &File){
 
-   // Do encrypts
+    switch(EncryptData.first){
+
+    case 0:{
+        //CodedArray = EncryptType1(BinArray, EncryptSpace);
+        break;
+    }
+
+    case 1:{ // Guardado de los datos de usuarios // Traduccion a binario
+
+        std::string BinArray[500], DecryptArray[500], BinStrings[500], Line;
+
+        File.open(DataFile, std::_S_in);
+
+        if(File.fail()){
+
+            printf("[ERROR]:No se pudo abrir el archivo de datos.\n");
+            exit(-1);
+
+        }
+
+        for(int i = 0; !File.eof(); i++){
+
+            std::string AuxArray[500];
+            Line.clear();
+
+            std::getline(File, Line);
+
+            BinRedimension(Line, AuxArray, EncryptData.second);
+            EncryptType2(AuxArray, BinArray, true);
+            Line.clear();
+
+            for(int j = 0; BinArray[j] != ""; i++){
+
+                Line += BinArray[i];
+                BinArray[i].clear();
+
+            }
+
+            BinRedimension(Line, DecryptArray, 8);
+            break;
+        }
+
+        for(int j = 0, k = 0; DecryptArray[j]!= ""; j++){
+
+            if(BinToText(DecryptArray[j]) == ";")
+                k++;
+
+            else if(BinToText(DecryptArray[j]) != "," && DecryptArray[j] != "00000000")
+                Parking[j][k] += BinToText(DecryptArray[j]);
+
+            DecryptArray[j].clear();
+
+        }
 
 
+        File.close();
+        // Fin de guardado de datos generales
+        break;
+    }
+
+    case 2: break;
+
+    case 3: break;
+
+    default: /*EncryptType2(false);*/ break;
+
+    }
 }
 
 void FileHandler::hashLoad(std::ifstream &){

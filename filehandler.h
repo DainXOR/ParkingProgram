@@ -73,7 +73,7 @@ protected:
     /// Corrimiento de bits en rueda
     void EncryptType1(bool UndoEncrypt);
     /// Intercambio de bits basado en el grupo anterior
-    void EncryptType2(bool UndoEncrypt);
+    void EncryptType2(std::string Binstr[], std::string EncryptBintStr[], bool UndoEncrypt);
     /// Intercalado de bits en zigzag
     void EncryptType3(bool UndoEncrypt);
     /// Mezclado aleatorio

@@ -624,9 +624,12 @@ void FileHandler::encryptSave(std::ofstream &File){
 
     switch(EncryptData.first){
 
-    case 1: break;
+    case 0:{
+        //CodedArray = EncryptType1(BinArray, EncryptSpace);
+        break;
+    }
 
-    case 2:{ // Guardado de los datos de usuarios // Traduccion a binario
+    case 1:{ // Guardado de los datos de usuarios // Traduccion a binario
 
             std::string BinArray, CodedArray;
 
@@ -641,76 +644,77 @@ void FileHandler::encryptSave(std::ofstream &File){
 
             for(auto Level : Parking){
                 for(auto Data : Level.second){
+
+                    int j = 0;
+
                     for(char C : Data){
 
                     std::string AuxStr;
                     int AuxInt;
 
 
-                        AuxInt = TextToBin(C);
+                    AuxInt = TextToBin(C);
 
-                        for(int l = 0; l < 8; l++){
+                    for(int l = 0; l < 8; l++){
 
-                            AuxStr.push_back((AuxInt % 10) + 48);
-                            AuxInt /= 10;
-
-                        }
-
-                        std::string AuxStrInv(AuxStr.rbegin(), AuxStr.rend());
-                        BinArray += AuxStrInv;
-                        AuxStr.clear();
-                        AuxStrInv.clear();
+                        AuxStr.push_back((AuxInt % 10) + 48);
+                        AuxInt /= 10;
 
                     }
 
-                    BinArray += j == 3? "00101110" : "00111011";
-
-                } // Fin de traduccion a binario // Encriptacion segun lo configurado
-
-                if(EncryptType == 0){
-
-                    STR AuxArray1[400], AuxArray2[400], AuxStr;
-
-                    BinRedimension(BinArray, AuxArray1, EncryptSpace);
-                    EncryptType0(AuxArray1, AuxArray2, EncryptSpace);
-
-                    for(int j = 0; AuxArray1[j] != ""; j++)
-                        AuxArray1[j].clear();
-
-                    for(STR String : AuxArray2){
-
-                        if(String == "") break;
-                        AuxStr += String;
-
-                    }
-
-                    BinRedimension(AuxStr, AuxArray1, int(BinArray.length()));
-                    CodedArray = AuxArray1[0];
+                    std::string AuxStrInv(AuxStr.rbegin(), AuxStr.rend());
+                    BinArray += AuxStrInv;
+                    AuxStr.clear();
+                    AuxStrInv.clear();
 
                 }
 
-                else
-                    CodedArray = EncryptType1(BinArray, EncryptSpace);
+                BinArray += j < 2? "00101110" : "00111011";
+                j++;
 
-                File << CodedArray << "\n";
-                BinArray.clear();
-                CodedArray.clear();
+            } // Fin de traduccion a binario // Encriptacion segun lo configurado
+
+            {
+
+                std::string AuxArray1[400], AuxArray2[400], AuxStr;
+
+                BinRedimension(BinArray, AuxArray1, EncryptData.second);
+                EncryptType2(AuxArray1, AuxArray2, false);
+
+                for(int j = 0; AuxArray1[j] != ""; j++)
+                    AuxArray1[j].clear();
+
+                for(std::string String : AuxArray2){
+
+                    if(String == "") break;
+                    AuxStr += String;
+
+                }
+
+                BinRedimension(AuxStr, AuxArray1, int(BinArray.length()));
+                CodedArray = AuxArray1[0];
 
             }
 
+
+            File << CodedArray << "\n";
+            BinArray.clear();
+            CodedArray.clear();
+
+        }
+
             File.close();
 
-         // Fin de guardado de datos de usuarios
+         // Fin de guardado de datos generales
 
-        EncryptType2(false);
         break;
     }
 
+    case 2: break;
+
     case 3: break;
 
-    case 4: break;
-
-    default: EncryptType2(false); break;
+    default: /*EncryptType2(false);*/ break;
 
     }
 
@@ -722,40 +726,38 @@ void FileHandler::hashSave(std::ofstream &File){
 
 }
 
-void FileHandler::EncryptType2(bool UndoEncrypt){
+void FileHandler::EncryptType2(std::string Binstr[], std::string EncryptBintStr[], bool UndoEncrypt){
 
-    std::string Str1[500], Str2[500];
-
-    for(int i = 0; Str1[i] != ""; i++){
+    for(int i = 0; Binstr[i] != ""; i++){
 
         int Comp;
 
             if(!UndoEncrypt)
-                Comp = i > 0? Count01(Str1[i - 1]) : -1;
+                Comp = i > 0? Count01(Binstr[i - 1]) : -1;
 
             else
-                Comp = i > 0? Count01(Str2[i - 1]) : -1;
+                Comp = i > 0? Count01(EncryptBintStr[i - 1]) : -1;
 
-        for(int j = 0; j < EncryptData.second || Str1[i][unsigned(j)] != '\0'; j++){
+        for(int j = 0; j < EncryptData.second || Binstr[i][unsigned(j)] != '\0'; j++){
 
             if(Comp == 0){
                 if((j + 1) % 2 == 0){
 
-                    if(Str1[i][unsigned(j)] == '0')
-                        Str2[i].push_back('1');
+                    if(Binstr[i][unsigned(j)] == '0')
+                        EncryptBintStr[i].push_back('1');
 
-                    else if(Str1[i][unsigned(j)] == '1')
-                        Str2[i].push_back('0');
+                    else if(Binstr[i][unsigned(j)] == '1')
+                        EncryptBintStr[i].push_back('0');
 
                 }
 
                 else {
 
-                    if(Str1[i][unsigned(j)] == '1')
-                        Str2[i].push_back('1');
+                    if(Binstr[i][unsigned(j)] == '1')
+                        EncryptBintStr[i].push_back('1');
 
-                    else if(Str1[i][unsigned(j)] == '0')
-                        Str2[i].push_back('0');
+                    else if(Binstr[i][unsigned(j)] == '0')
+                        EncryptBintStr[i].push_back('0');
 
                 }
             }
@@ -763,29 +765,29 @@ void FileHandler::EncryptType2(bool UndoEncrypt){
             else if(Comp == 1){
                 if((j + 1) % 3 == 0){
 
-                    if(Str1[i][unsigned(j)] == '0')
-                        Str2[i].push_back('1');
+                    if(Binstr[i][unsigned(j)] == '0')
+                        EncryptBintStr[i].push_back('1');
 
-                    else if(Str1[i][unsigned(j)] == '1')
-                        Str2[i].push_back('0');
+                    else if(Binstr[i][unsigned(j)] == '1')
+                        EncryptBintStr[i].push_back('0');
 
                 }
 
                 else{
 
-                    if(Str1[i][unsigned(j)] == '1')
-                        Str2[i].push_back('1');
+                    if(Binstr[i][unsigned(j)] == '1')
+                        EncryptBintStr[i].push_back('1');
 
-                    else if(Str1[i][unsigned(j)] == '0')
-                        Str2[i].push_back('0');
+                    else if(Binstr[i][unsigned(j)] == '0')
+                        EncryptBintStr[i].push_back('0');
 
                 }
             }
 
             else if(Comp == 2 || i == 0)
-                Str1[i][unsigned(j)] == '0'?
-                    Str2[i].push_back('1') :
-                    Str2[i].push_back('0');
+                Binstr[i][unsigned(j)] == '0'?
+                    EncryptBintStr[i].push_back('1') :
+                    EncryptBintStr[i].push_back('0');
 
         }
     }

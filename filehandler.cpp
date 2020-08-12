@@ -167,8 +167,21 @@ void FileHandler::newLoad(std::ofstream &File){
 
    File.close();
    File.open(DataFile, std::_S_out);
+
+   File << "1,70,C,00.00%\n";
+   File << "2,70,M,00.00%\n";
+   File << "3,70,B,00.00%\n";
+
    File.close();
    File.open(FloorsFile, std::_S_out);
+
+   File << "1;\n";
+   File << "0=\n";
+   File << "2;\n";
+   File << "0=\n";
+   File << "3;\n";
+   File << "0=\n";
+
    File.close();
    File.open(AdminsFile, std::_S_out);
    File.close();
@@ -556,7 +569,7 @@ void FileHandler::encryptLoad(std::ifstream &File){
             }
 
             BinRedimension(Line, DecryptArray, 8);
-            break;
+
         }
 
         for(int j = 0, k = 0; DecryptArray[j]!= ""; j++){

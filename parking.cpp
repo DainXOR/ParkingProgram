@@ -783,7 +783,7 @@ bool MainProg::ChangeCosts(){
             std::cin >> *Opt;
             *Opt = *Opt <= 1? 1 : 2;
 
-            if(*Opt == 1)
+            if(*Opt == 2)
                 break;
 
         }
@@ -1026,6 +1026,9 @@ std::pair<int, int> MainProg::searchVehicle(std::string License, bool Return){
         system("pause");
 
     }
+
+    if(!Return)
+        system("pause");
 
     return std::pair<int, int>(0, 0);
 

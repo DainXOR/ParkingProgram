@@ -88,7 +88,7 @@ void FileHandler::newLoad(std::ofstream &File){
    printf("%s", "Opcion: ");
    std::cin >> SaveType;
    SaveType--;
-   SaveType = SaveType > 2? 2 : SaveType < 0? 0 : SaveType;
+   SaveType = SaveType > 1? 1 : SaveType < 0? 0 : SaveType;
 
    switch(SaveType){
 
@@ -100,7 +100,7 @@ void FileHandler::newLoad(std::ofstream &File){
 
        Opts = Opts >= 3? 3 : Opts;
        Opts--;
-       EncryptData.first = Opts;
+       EncryptData.first = 1;
 
        system("cls");
        printf("%s\n\n", !Opts? "Corrimiento de bits" : Opts == 1? "Intercambio de bits" : Opts == 2? "Intercalado de bits" : "Mezclado aleatorio");
@@ -178,6 +178,7 @@ void FileHandler::newLoad(std::ofstream &File){
    printf("%s\n\n %s", "Archivos creados.\n");
    system("cls");
    printf("IMPORTANTE: Para ingresar como administrador debera ingresar el numero 256 en el menu de usuario.\n\n");
+   printf("NOTA: Actualmente solo funciona un algoritmo de encriptacion por lo que este sera el usado a pesar que intente seleccionar otros.\n\n");
    system("pause");
    printf("Iniciando programa principal...\n");
    return;
@@ -207,14 +208,13 @@ void FileHandler::LoadConfig(std::ifstream &File){
            for(char C : Aux){
 
                if(C == ':' || C == ',') j++;
-               // else if(C == ',') i++;
                else if(C == ';') break;
                else{
                    switch(j){
 
                    case 1: EncryptData.first = C - 48; break;
                    case 2: EncryptData.second *= 10; EncryptData.second += C - 48; break;
-                   default: break; //Error message
+                   default: printf("Fail"); system("pause"); break; //Error message
 
                    }
                }
@@ -518,7 +518,7 @@ void FileHandler::normalLoad(std::ifstream &File){
 void FileHandler::encryptLoad(std::ifstream &){
 
    // Do encrypts
-   printf("%s\n", "Entro al encrypt");
+
 
 }
 
@@ -543,7 +543,12 @@ void FileHandler::SaveData(){
    }
    else{
 
-       WriteFile << SaveType << ";\n";
+       if(SaveType == 0)
+           WriteFile << SaveType << ";\n";
+
+       else if(SaveType == 1)
+           WriteFile << SaveType << ":" << EncryptData.first << "," << EncryptData.second << ";\n";
+
        WriteFile << DataFile << ":" << FloorsFile << "," << AdminsFile << "," << UsersFile << ";\n";
        WriteFile << TemporalRates[0] << "," << TemporalRates[1] << "," << TemporalRates[2] << "," << MonthlyRates[0] << "," << MonthlyRates[1] << "," << MonthlyRates[2] << ";";
        WriteFile.close();

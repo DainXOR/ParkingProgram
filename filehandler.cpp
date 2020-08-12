@@ -622,7 +622,15 @@ void FileHandler::normalSave(std::ofstream &File){
 
 void FileHandler::encryptSave(std::ofstream &File){
 
+    switch(EncryptData.first){
 
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    default: break;
+
+    }
 
 }
 
@@ -630,6 +638,75 @@ void FileHandler::hashSave(std::ofstream &File){
 
 
 
+}
+
+void FileHandler::EncryptType2(bool UndoEncrypt){
+
+    std::string Str1[500], Str2[500];
+
+    for(int i = 0; Str1[i] != ""; i++){
+
+        int Comp;
+
+            if(!UndoEncrypt)
+                Comp = i > 0? Count01(Str1[i - 1]) : -1;
+
+            else
+                Comp = i > 0? Count01(Str2[i - 1]) : -1;
+
+        for(int j = 0; j < EncryptData.second || Str1[i][unsigned(j)] != '\0'; j++){
+
+            if(Comp == 0){
+                if((j + 1) % 2 == 0){
+
+                    if(Str1[i][unsigned(j)] == '0')
+                        Str2[i].push_back('1');
+
+                    else if(Str1[i][unsigned(j)] == '1')
+                        Str2[i].push_back('0');
+
+                }
+
+                else {
+
+                    if(Str1[i][unsigned(j)] == '1')
+                        Str2[i].push_back('1');
+
+                    else if(Str1[i][unsigned(j)] == '0')
+                        Str2[i].push_back('0');
+
+                }
+            }
+
+            else if(Comp == 1){
+                if((j + 1) % 3 == 0){
+
+                    if(Str1[i][unsigned(j)] == '0')
+                        Str2[i].push_back('1');
+
+                    else if(Str1[i][unsigned(j)] == '1')
+                        Str2[i].push_back('0');
+
+                }
+
+                else{
+
+                    if(Str1[i][unsigned(j)] == '1')
+                        Str2[i].push_back('1');
+
+                    else if(Str1[i][unsigned(j)] == '0')
+                        Str2[i].push_back('0');
+
+                }
+            }
+
+            else if(Comp == 2 || i == 0)
+                Str1[i][unsigned(j)] == '0'?
+                    Str2[i].push_back('1') :
+                    Str2[i].push_back('0');
+
+        }
+    }
 }
 
 //************** Setter Functions  **************//
